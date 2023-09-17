@@ -1,9 +1,5 @@
 #!/bin/bash
 
-echo "really doing sthing"
+echo "building and starting"
+go build -v -o htmx && ./htmx
 
-start(){
-    echo "building and starting"
-    go build -v -o htmx && ./htmx
-}
-$*
