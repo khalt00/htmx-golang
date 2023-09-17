@@ -1,0 +1,107 @@
+{{define "index"}}
+
+<!DOCTYPE html>
+<html>
+{{template "head"}}
+
+<body>
+    {{template "Header"}}
+    <!-- {{range .data}}
+    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50">
+        {{ .Task}}
+    </button>
+    {{end}} -->
+    {{block "todo-list" .}}
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-md shadow-md">
+        <div class="flex justify-between">
+            <h1 class="text-2xl font-semibold mb-4">Todo List</h1>
+            <button
+                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50"
+                onclick="openForm()" hx-get="/new">
+                Create Task
+            </button>
+        </div>
+        <table class="min-w-full">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2">ID</th>
+                    <th class="px-4 py-2">Task</th>
+                    <th class="px-4 py-2">Created At</th>
+                    <th class="px-4 py-2">Is Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .data}}
+                <tr class="todo-item">
+                    <td class="px-4 py-2">{{.ID}}</td>
+                    <td class="px-4 py-2">{{.Task}}</td>
+                    <td class="px-4 py-2">{{.CreatedAt}}</td>
+                    <td class="px-4 py-2">{{if .IsCompleted}}<p>Completed</p> {{else }} <p>Doing</p> {{end}}</td>
+                    <td>
+                        <button
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50"
+                            hx-delete="/{{.ID}}" hx-swap="outerHTML" hx-target="closest .todo-item">Delete</button>
+                       <!-- Todo: Add edit func-->
+                            <!-- <a
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50"
+                            hx-get="/edit/{{.ID}}"
+                           hx-target="#"
+                            >Edit</a> -->
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+    {{end}}
+
+
+    {{block "create-edit-todo" .}}
+
+    <div id="todoForm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10"
+        style="display: none;">
+        <div class="bg-white p-6 rounded-md shadow-md">
+            <h1 class="text-2xl font-semibold mb-4">Todo Form</h1>
+            <form hx-target="body" hx-post="/new" hx-swap="outerHTML" id="createForm" class="space-y-4">
+                <!-- Add form fields for creating/editing a todo item -->
+                <div class="flex items-center justify-between">
+                    <label for="task">Task:</label>
+                    <input type="text" id="task" {{if .Todo}} value="{{ .Todo.Task}}" {{end}} name="task" class="border rounded-md p-2" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <label for="isCompleted">Is Completed:</label>
+                    <input type="checkbox" value="true" id="isCompleted" name="isCompleted">
+                </div>
+                <button type="submit"
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50">
+                    {{if .IsCreate}} Create {{else}} Save {{end}}
+                </button>
+            </form>
+            <button onclick="closeForm()" class="mt-4 text-blue-500 hover:text-blue-600 cursor-pointer">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function openForm() {
+            const form = document.getElementById('todoForm');
+            form.style.display = 'block';
+        }
+
+        function closeForm() {
+            const form = document.getElementById('todoForm');
+            form.style.display = 'none';
+        }
+
+        document.getElementById('openFormButton').addEventListener('click', openForm);
+        document.querySelector('#todoForm button[type="submit"]').addEventListener('click', closeForm);
+        document.querySelector('#todoForm button[type="button"]').addEventListener('click', closeForm);
+    </script>
+
+    {{end}}
+
+    <!-- {{template "Footer"}} -->
+</body>
+
+</html>
+
+{{end}}
